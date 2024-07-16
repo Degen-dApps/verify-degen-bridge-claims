@@ -1,0 +1,19 @@
+{
+  "name": "verify-degen-bridge-claims",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --experimental-modules index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@airstack/node": "^0.0.7",
+    "dotenv": "^16.4.5",
+    "ethers": "^5.7.1"
+  },
+  "type": "module"
+}
