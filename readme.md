@@ -1,6 +1,6 @@
 # Script to verify Degen Chain Bridge claims
 
-### Install packagase
+### Install packages
 
 ```bash
 npm install
