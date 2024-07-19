@@ -29,6 +29,8 @@ async function main() {
     // Skip the header row
     const parsedData = lines.slice(1).map(parseRow);
 
+    console.log('Number of claims:', parsedData.length);
+
     const processedHashesValid = []; // processed tx hashes of valid claims
     const processedHashesNonValid = []; // processed tx hashes of non-valid claims
 
@@ -197,20 +199,20 @@ function parseRow(row) {
 
   // Remove leading/trailing quotes (if any)
   return {
-    claimId: claimId.trim().replace(/^"|"$|^'|'$/g, ''),
-    walletAddress: walletAddress.trim().replace(/^"|"$|^'|'$/g, ''),
-    degenAmount: parseFloat(degenAmount),
-    degenTxHash: degenTxHash.trim().replace(/^"|"$|^'|'$/g, ''),
-    baseAmount: parseFloat(baseAmount),
-    baseTxHash: baseTxHash.trim().replace(/^"|"$|^'|'$/g, ''),
-    contactInfo: contactInfo.trim().replace(/^"|"$|^'|'$/g, ''),
-    additionalInfo: additionalInfo.trim().replace(/^"|"$|^'|'$/g, ''),
+    claimId: claimId,
+    walletAddress: walletAddress ? walletAddress.trim().replace(/^"|"$|^'|'$/g, '') : walletAddress,
+    degenAmount: degenAmount ? parseFloat(degenAmount) : degenAmount,
+    degenTxHash: degenTxHash ? degenTxHash.trim().replace(/^"|"$|^'|'$/g, '') : degenTxHash,
+    baseAmount: baseAmount ? parseFloat(baseAmount) : baseAmount,
+    baseTxHash: baseTxHash ? baseTxHash.trim().replace(/^"|"$|^'|'$/g, '') : baseTxHash,
+    contactInfo: contactInfo ? contactInfo.trim().replace(/^"|"$|^'|'$/g, '') : contactInfo,
+    additionalInfo: additionalInfo ? additionalInfo.trim().replace(/^"|"$|^'|'$/g, '') : additionalInfo,
     responseType,
-    startDate: new Date(startDate),
-    stageDate: stageDate ? new Date(stageDate) : null,
-    submitDate: new Date(submitDate),
+    startDate: startDate,
+    stageDate: stageDate,
+    submitDate: submitDate,
     networkId,
-    tags: tags.trim().replace(/^"|"$|^'|'$/g, ''),
+    tags: tags,
   };
 }
 
@@ -222,6 +224,15 @@ async function getBaseTxData(userAddress, txHash, notes) {
       amount: 0,
       datetime: null,
       notes: notes + 'No Base transaction hash provided. ',
+      valid: false,
+    }
+  }
+
+  if (!txHash.startsWith('0x')) {
+    return {
+      amount: 0,
+      datetime: null,
+      notes: notes + 'Invalid Base transaction hash. ',
       valid: false,
     }
   }
@@ -255,6 +266,8 @@ async function getBaseTxData(userAddress, txHash, notes) {
   const response = await fetchQuery(query);
 
   const resObjects = response["data"]["TokenTransfers"]["TokenTransfer"];
+
+  //console.log('resObjects:', resObjects);
 
   if (!resObjects || resObjects.length === 0) {
     return {
@@ -305,6 +318,15 @@ async function getDegenTxData(userAddress, txHash, notes) {
       amount: 0,
       datetime: null,
       notes: notes + 'No Degen Chain transaction hash provided. ',
+      valid: false,
+    }
+  }
+
+  if (!txHash.startsWith('0x')) {
+    return {
+      amount: 0,
+      datetime: null,
+      notes: notes + 'Invalid Degen Chain transaction hash. ',
       valid: false,
     }
   }
